@@ -15,10 +15,10 @@
 <!-- Login -->
 <section id="login" class="login">
   <form id="loginForm" class="panel">
-    <h1>Masuk admin</h1>
-    <p class="hint">Gunakan GitHub Personal Access Token (izin <b>Contents: Read and write</b> untuk repo katalog ini).</p>
+    <h1>Login admin</h1>
+    <p class="hint">***</p>
     <label>Username GitHub<input id="fOwner" required autocomplete="off"></label>
-    <label>Nama repository<input id="fRepo" required autocomplete="off"></label>
+    <label>Repo<input id="fRepo" required autocomplete="off"></label>
     <label>Branch<input id="fBranch" value="main" required></label>
     <label>Token (PAT)<input id="fToken" type="password" required autocomplete="off" placeholder="github_pat_..."></label>
     <p id="loginErr" class="err" role="alert"></p>
@@ -57,9 +57,24 @@
         </div>
         <label>Nama toko<input id="sName" required></label>
         <label>Deskripsi singkat<input id="sTag" maxlength="120"></label>
-        <label>Link Instagram<input id="sIg" type="url" placeholder="https://instagram.com/..."></label>
-        <label>Link toko Shopee<input id="sShop" type="url" placeholder="https://shopee.co.id/..."></label>
+        <label>Link Instagram<input id="sIg" type="text" inputmode="url" placeholder="https://instagram.com/..."></label>
+        <label>Link toko Shopee<input id="sShop" type="text" inputmode="url" placeholder="https://shopee.co.id/..."></label>
         <label>Warna tema<input id="sTheme" type="color" value="#ee4d2d"></label>
+        <fieldset class="fs">
+          <legend>Foto header katalog</legend>
+          <div class="hdr-prev" id="hdrPrev">Belum ada foto</div>
+          <div class="hdr-act">
+            <label class="btn ghost">Pilih foto<input type="file" id="hdrFile" accept="image/*" hidden></label>
+            <button type="button" class="btn ghost" id="hdrDel">Hapus foto</button>
+          </div>
+          <p class="hint">Saran ukuran foto 1600x600</p>
+        </fieldset>
+        <fieldset class="fs">
+          <legend>WhatsApp</legend>
+          <p class="hint">Nomor boleh diawali 08 atau 62.</p>
+          <div id="contacts"></div>
+          <button type="button" class="btn ghost" id="addContact">+ Tambah WA</button>
+        </fieldset>
         <button class="btn primary">Simpan info toko</button>
       </form>
     </section>
@@ -85,7 +100,7 @@
     </div>
     <datalist id="cats"></datalist>
     <label>Deskripsi<textarea id="pDesc" rows="3"></textarea></label>
-    <label>Link produk Shopee<input id="pShopee" type="url" required placeholder="https://shopee.co.id/..."></label>
+    <label>Link produk Shopee<input id="pShopee" type="text" inputmode="url" required placeholder="https://shopee.co.id/..."></label>
     <label class="check"><input type="checkbox" id="pActive" checked> Tampilkan di katalog</label>
     <button class="btn primary" id="pSave">Simpan produk</button>
   </form>
@@ -95,8 +110,8 @@
 <div id="install" class="modal" hidden>
   <div class="sheet center">
     <div class="app-ic"><img src="icons/icon-192.png" alt="" width="64" height="64"></div>
-    <h2>Install aplikasi admin</h2>
-    <p id="installTxt">install Akses lebih cepat</p>
+    <h2>Install Aplikasi</h2>
+    <p id="installTxt">Install aplikais admin sulaya bisa di akses cepat.</p>
     <button class="btn primary" id="installBtn">Install sekarang</button>
     <button class="btn ghost" id="installLater">Nanti saja</button>
   </div>
