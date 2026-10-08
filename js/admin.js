@@ -244,8 +244,8 @@ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
 let dp=null;
 function showInstall(){
   if(standalone()||sessionStorage.getItem('instLater'))return;
-  if(dp){$('#installBtn').hidden=false;$('#installTxt').textContent='Pasang di perangkatmu agar admin bisa dibuka cepat seperti aplikasi biasa.'}
-  else{$('#installBtn').hidden=true;$('#installTxt').textContent=ios?'Di Safari, ketuk tombol Bagikan lalu pilih "Tambah ke Layar Utama".':'Buka menu browser (titik tiga) lalu pilih "Instal aplikasi" atau "Tambahkan ke layar utama".'}
+  if(dp){$('#installBtn').hidden=false;$('#installTxt').textContent='Install aplikasi supaya admin bisa dibuka cepat dilayar depan.'}
+  else{$('#installBtn').hidden=true;$('#installTxt').textContent=ios?'Di Safari (ios), ketuk tombol Bagikan lalu pilih "Tambah ke Layar Utama".':'Buka menu browser (titik tiga) lalu pilih "Instal aplikasi" atau "Tambahkan ke layar utama".'}
   $('#install').hidden=false;
 }
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;showInstall()});
