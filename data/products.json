@@ -1,11 +1,11 @@
 {
   "store": {
-    "name": "Toko Contoh",
+    "name": "Toko sadbor",
     "tagline": "Produk pilihan, checkout aman lewat Shopee.",
     "instagram": "https://instagram.com/username",
     "shopeeStore": "https://shopee.co.id/",
     "logo": "",
-    "theme": "#ee4d2d"
+    "theme": "#ff0000"
   },
   "products": [
     {
