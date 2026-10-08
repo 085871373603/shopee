@@ -25,7 +25,13 @@
     <input id="q" type="search" placeholder="Cari produk" aria-label="Cari produk">
     <div id="chips" class="chips" role="tablist"></div>
   </div>
-  <p id="count" class="count"></p>
+  <div class="meta">
+    <p id="count" class="count" aria-live="polite"></p>
+    <select id="sort" class="sort" aria-label="Urutkan produk">
+      <option value="">Pilihan toko</option><option value="baru">Terbaru</option><option value="populer">Terpopuler</option>
+      <option value="murah">Harga terendah</option><option value="mahal">Harga tertinggi</option>
+    </select>
+  </div>
   <section id="grid" class="grid" aria-live="polite">
     <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
   </section>
@@ -40,7 +46,7 @@
 </div>
 <div id="wa" class="wa" hidden>
   <div id="waPanel" class="wa-panel" hidden>
-    <div class="wa-h">Kontak<small>Seller, agen, dan distributor</small></div>
+    <div class="wa-h">Hubungi kami<small>Seller, agen, dan distributor</small></div>
     <div id="waList"></div>
   </div>
   <button id="waBtn" class="wa-btn" aria-label="Chat WhatsApp">
