@@ -5,7 +5,15 @@
     "instagram": "https://instagram.com/username",
     "shopeeStore": "https://shopee.co.id/",
     "logo": "images/1791496158227-logo.jpg",
-    "theme": "#ff6600"
+    "theme": "#ff6600",
+    "headerImage": "images/1791498340475-header.jpg",
+    "contacts": [
+      {
+        "role": "Seller",
+        "phone": "6285871873041",
+        "name": "TOM HAYE"
+      }
+    ]
   },
   "products": [
     {
