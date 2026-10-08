@@ -1,0 +1,14 @@
+{
+  "store": {
+    "name": "Toko Contoh",
+    "tagline": "Produk pilihan, checkout aman lewat Shopee.",
+    "instagram": "https://instagram.com/username",
+    "shopeeStore": "https://shopee.co.id/",
+    "logo": "",
+    "theme": "#ee4d2d"
+  },
+  "products": [
+    {"id":"p1","name":"Produk Contoh 1","price":89000,"oldPrice":120000,"category":"Populer","desc":"Ganti dengan deskripsi produkmu lewat halaman admin.","image":"","shopee":"https://shopee.co.id/","badge":"Terlaris","active":true},
+    {"id":"p2","name":"Produk Contoh 2","price":55000,"oldPrice":0,"category":"Baru","desc":"Foto, harga, dan link Shopee bisa diubah dari admin.","image":"","shopee":"https://shopee.co.id/","badge":"","active":true}
+  ]
+}
