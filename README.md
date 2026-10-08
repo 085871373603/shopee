@@ -17,3 +17,8 @@
 ## Catatan keamanan
 - Token disimpan di browser perangkat admin (localStorage). Pakai token khusus repo ini dan jangan dibagikan.
 - Siapa pun yang menemukan `admin.html` tidak bisa mengubah apa pun tanpa token.
+
+## Fitur tambahan
+- Katalog: klik kanan, seleksi teks, copy, dan drag dinonaktifkan; klik kartu produk untuk popup detail & deskripsi.
+- Admin > Info toko: unggah foto header dan atur kontak WhatsApp (Seller / Agen / Distributor) yang tampil sebagai balon chat di katalog.
+- Catatan: proteksi salin hanya menghalangi pengguna awam. Siapa pun yang ahli tetap bisa mengambil konten lewat tools browser.
