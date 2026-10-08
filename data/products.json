@@ -8,7 +8,29 @@
     "theme": "#ee4d2d"
   },
   "products": [
-    {"id":"p1","name":"Produk Contoh 1","price":89000,"oldPrice":120000,"category":"Populer","desc":"Ganti dengan deskripsi produkmu lewat halaman admin.","image":"","shopee":"https://shopee.co.id/","badge":"Terlaris","active":true},
-    {"id":"p2","name":"Produk Contoh 2","price":55000,"oldPrice":0,"category":"Baru","desc":"Foto, harga, dan link Shopee bisa diubah dari admin.","image":"","shopee":"https://shopee.co.id/","badge":"","active":true}
+    {
+      "id": "p2",
+      "name": "ESP32 DOIT WIFI BLUETOOTH",
+      "price": 65665,
+      "oldPrice": 100000,
+      "category": "Baru",
+      "badge": "Terlaris",
+      "desc": "ESP32 DOIT Bluetooth CH340 — Development Board\n\nDeskripsi Produk\n\nESP32 DOIT Bluetooth CH340 merupakan modul mikrokontroler yang dirancang untuk kebutuhan pengembangan perangkat elektronik, IoT (Internet of Things), dan sistem otomasi. Modul ini menggunakan chip ESP32 dengan dukungan konektivitas Wi-Fi dan Bluetooth, sehingga cocok untuk berbagai proyek berbasis komunikasi nirkabel.\n\nDilengkapi dengan antarmuka USB-to-Serial CH340, board ini memudahkan proses pemrograman dan komunikasi data melalui komputer atau laptop. Modul dapat digunakan untuk pengembangan sistem monitoring, smart home, robotika, sensor digital, hingga perangkat kendali jarak jauh.\n\nSpesifikasi Produk:\n\n- Mikrokontroler: ESP32\n- Konektivitas: Wi-Fi dan Bluetooth\n- USB-to-Serial: CH340\n- Antarmuka pemrograman: USB\n- Kompatibilitas: Arduino IDE dan ESP-IDF\n- Penggunaan: Proyek IoT, otomasi, robotika, dan embedded system\n\nKeunggulan Produk:\n\n- Mendukung pengembangan perangkat IoT berbasis nirkabel.\n- Memudahkan pemrograman melalui koneksi USB.\n- Cocok untuk prototipe maupun eksperimen elektronika.\n- Mendukung berbagai sensor dan modul tambahan melalui pin GPIO.\n- Ideal untuk pelajar, mahasiswa, teknisi, maker, dan pengembang perangkat elektronik.\n\nIsi Paket:\n\n- 1 × ESP32 DOIT Bluetooth CH340 Development Board\n\nCatatan: Pastikan driver CH340 telah terpasang pada komputer jika board tidak terdeteksi saat dihubungkan melalui USB. Spesifikasi pin, jenis konektor USB, dan versi board dapat berbeda sesuai varian produk yang diterima.",
+      "image": "images/1791494997798-esp32-doit-wifi-bluetooth.jpg",
+      "shopee": "https://id.shp.ee/4jmJsiit",
+      "active": true
+    },
+    {
+      "id": "p1",
+      "name": "Produk Contoh 1",
+      "price": 89000,
+      "oldPrice": 120000,
+      "category": "Populer",
+      "desc": "Ganti dengan deskripsi produkmu lewat halaman admin.",
+      "image": "",
+      "shopee": "https://shopee.co.id/",
+      "badge": "Terlaris",
+      "active": true
+    }
   ]
 }
