@@ -39,6 +39,18 @@
       "image": "images/1791500891065-gelang-pria.jpg",
       "shopee": "https://id.shp.ee/Q1q6rf4x",
       "active": true
+    },
+    {
+      "id": "pmv05l18p",
+      "name": "Gelang Tali Simpel",
+      "price": 23010,
+      "oldPrice": 30000,
+      "category": "Populer",
+      "badge": "Terlaris",
+      "desc": "Gelang tali pria simpel",
+      "image": "",
+      "shopee": "https://id.shp.ee/4e4omvaA",
+      "active": true
     }
   ]
 }
