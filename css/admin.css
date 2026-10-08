@@ -65,3 +65,13 @@ input:focus,textarea:focus,.btn:focus-visible,.tab:focus-visible{outline:3px sol
 @keyframes up{from{transform:translateY(30px);opacity:.4}}
 @media(min-width:640px){.modal{align-items:center}.sheet{border-radius:20px}}
 @media(prefers-reduced-motion:reduce){.sheet{animation:none}.toast{transition:none}}
+
+.fs{border:1px solid var(--line);border-radius:14px;padding:12px 14px 14px;margin:0 0 14px}
+.fs legend{font-weight:700;font-size:13px;padding:0 6px}
+.hdr-prev{height:120px;border-radius:12px;background:#eceff4 center/cover no-repeat;display:grid;place-items:center;color:var(--mute);font-size:13px;margin-bottom:10px}
+.hdr-act{display:flex;gap:8px}
+.hdr-act label{margin:0}
+.crow{display:grid;grid-template-columns:1fr 112px;gap:6px;padding:10px;margin-bottom:8px;background:var(--bg);border-radius:12px;position:relative}
+.crow .cp{grid-column:1/2}
+.crow .cd{grid-column:2/3;justify-self:end;background:#fff}
+.crow select{font:inherit;padding:11px 8px;border:1px solid var(--line);border-radius:10px;background:#fff}
