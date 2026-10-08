@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin Katalog</title>
+<meta name="theme-color" content="#14213d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- Login -->
+<section id="login" class="login">
+  <form id="loginForm" class="panel">
+    <h1>Masuk admin</h1>
+    <p class="hint">Gunakan GitHub Personal Access Token (izin <b>Contents: Read and write</b> untuk repo katalog ini).</p>
+    <label>Username GitHub<input id="fOwner" required autocomplete="off"></label>
+    <label>Nama repository<input id="fRepo" required autocomplete="off"></label>
+    <label>Branch<input id="fBranch" value="main" required></label>
+    <label>Token (PAT)<input id="fToken" type="password" required autocomplete="off" placeholder="github_pat_..."></label>
+    <p id="loginErr" class="err" role="alert"></p>
+    <button class="btn primary" id="loginBtn">Masuk</button>
+  </form>
+</section>
+
+<!-- Dashboard -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="brand">Admin Katalog</div>
+    <div class="top-r">
+      <a class="btn ghost" href="index.html" target="_blank">Lihat katalog</a>
+      <button class="btn primary" id="publish" disabled>Publikasikan</button>
+      <button class="btn ghost" id="logout" title="Keluar">Keluar</button>
+    </div>
+  </header>
+  <nav class="tabs">
+    <button class="tab on" data-t="products">Produk</button>
+    <button class="tab" data-t="store">Info toko</button>
+  </nav>
+  <main class="main">
+    <section id="tab-products">
+      <div class="bar">
+        <div id="stats" class="stats"></div>
+        <button class="btn primary" id="addBtn">+ Tambah produk</button>
+      </div>
+      <div id="list" class="list"></div>
+    </section>
+
+    <section id="tab-store" hidden>
+      <form id="storeForm" class="panel">
+        <div class="logo-row">
+          <div class="th big" id="logoPrev">🏪</div>
+          <label class="btn ghost">Ganti logo<input type="file" id="logoFile" accept="image/*" hidden></label>
+        </div>
+        <label>Nama toko<input id="sName" required></label>
+        <label>Deskripsi singkat<input id="sTag" maxlength="120"></label>
+        <label>Link Instagram<input id="sIg" type="url" placeholder="https://instagram.com/..."></label>
+        <label>Link toko Shopee<input id="sShop" type="url" placeholder="https://shopee.co.id/..."></label>
+        <label>Warna tema<input id="sTheme" type="color" value="#ee4d2d"></label>
+        <button class="btn primary">Simpan info toko</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<!-- Modal produk -->
+<div id="modal" class="modal" hidden>
+  <form id="pForm" class="sheet">
+    <div class="sheet-h"><h2 id="mTitle">Produk</h2><button type="button" class="x" id="mClose" aria-label="Tutup">×</button></div>
+    <div class="img-row">
+      <div class="th big" id="pPrev">🛍️</div>
+      <label class="btn ghost">Pilih foto<input type="file" id="pFile" accept="image/*" hidden></label>
+    </div>
+    <label>Nama produk<input id="pName" required></label>
+    <div class="two">
+      <label>Harga (Rp)<input id="pPrice" type="number" min="0" required></label>
+      <label>Harga coret (opsional)<input id="pOld" type="number" min="0"></label>
+    </div>
+    <div class="two">
+      <label>Kategori<input id="pCat" list="cats" placeholder="mis. Populer"></label>
+      <label>Label (opsional)<input id="pBadge" maxlength="14" placeholder="mis. Terlaris"></label>
+    </div>
+    <datalist id="cats"></datalist>
+    <label>Deskripsi<textarea id="pDesc" rows="3"></textarea></label>
+    <label>Link produk Shopee<input id="pShopee" type="url" required placeholder="https://shopee.co.id/..."></label>
+    <label class="check"><input type="checkbox" id="pActive" checked> Tampilkan di katalog</label>
+    <button class="btn primary" id="pSave">Simpan produk</button>
+  </form>
+</div>
+
+<!-- Popup install -->
+<div id="install" class="modal" hidden>
+  <div class="sheet center">
+    <div class="app-ic"><img src="icons/icon-192.png" alt="" width="64" height="64"></div>
+    <h2>Pasang aplikasi admin</h2>
+    <p id="installTxt">Pasang di perangkatmu agar admin bisa dibuka cepat seperti aplikasi biasa.</p>
+    <button class="btn primary" id="installBtn">Pasang sekarang</button>
+    <button class="btn ghost" id="installLater">Nanti saja</button>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status"></div>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Katalog Produk</title>
+<meta name="description" content="Katalog produk. Pembelian lewat Shopee.">
+<meta name="theme-color" content="#ee4d2d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <img id="logo" class="avatar" alt="" hidden>
+    <h1 id="storeName">Katalog</h1>
+    <p id="tagline"></p>
+    <div class="links" id="links"></div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="tools">
+    <input id="q" type="search" placeholder="Cari produk" aria-label="Cari produk">
+    <div id="chips" class="chips" role="tablist"></div>
+  </div>
+  <p id="count" class="count"></p>
+  <section id="grid" class="grid" aria-live="polite">
+    <div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div>
+  </section>
+  <p id="empty" class="empty" hidden>Produk tidak ditemukan. Coba kata kunci atau kategori lain.</p>
+</main>
+<footer class="foot">Klik "Beli di Shopee" untuk checkout. Pembayaran &amp; pengiriman diproses Shopee.</footer>
+<script src="js/index.js"></script>
+</body>
+</html>
