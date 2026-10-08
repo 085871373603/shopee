@@ -75,3 +75,28 @@ input:focus,textarea:focus,.btn:focus-visible,.tab:focus-visible{outline:3px sol
 .crow .cp{grid-column:1/2}
 .crow .cd{grid-column:2/3;justify-self:end;background:#fff}
 .crow select{font:inherit;padding:11px 8px;border:1px solid var(--line);border-radius:10px;background:#fff}
+
+.flags{display:flex;gap:16px;flex-wrap:wrap}
+.flags .check{margin-bottom:6px}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
+.info .tag{font-size:11px;color:var(--ok);margin:0}
+.info .tag.off{color:var(--mute)}
+.tag.new{background:#e0edff}.info .tag.new{color:#1d4ed8}
+.tag.pop{background:#ffe9e0}.info .tag.pop{color:#c2410c}
+/* Coaching */
+.co{position:fixed;inset:0;z-index:80}
+.co-dim{position:fixed;inset:0}
+.co.center .co-dim{background:rgba(16,24,40,.74)}
+.co.center .co-hole{display:none}
+.co-hole{position:fixed;border-radius:14px;pointer-events:none;box-shadow:0 0 0 3px #fff,0 0 0 9999px rgba(16,24,40,.74);transition:left .25s,top .25s,width .25s,height .25s}
+.co-card{position:fixed;width:min(340px,calc(100vw - 16px));background:#fff;border-radius:16px;padding:16px;box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.co.center .co-card{top:50%!important;left:50%!important;transform:translate(-50%,-50%)}
+.co-step{font-size:12px;font-weight:700;color:var(--mute)}
+.co-card h3{margin:2px 0 6px;font-size:17px}
+.co-card p{margin:0 0 12px;color:#344054}
+.co-dots{display:flex;gap:5px;margin-bottom:14px}
+.co-dots i{width:7px;height:7px;border-radius:50%;background:#d0d5dd}
+.co-dots i.on{width:18px;border-radius:4px;background:var(--ac)}
+.co-act{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.co-act span{display:flex;gap:6px}
+@media(prefers-reduced-motion:reduce){.co-hole{transition:none}}
