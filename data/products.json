@@ -30,14 +30,14 @@
     },
     {
       "id": "p1",
-      "name": "Produk Contoh 1",
-      "price": 89000,
-      "oldPrice": 120000,
+      "name": "Gelang Pria",
+      "price": 11466,
+      "oldPrice": 20000,
       "category": "Populer",
       "badge": "Terlaris",
       "desc": "Jam tangan pria",
       "image": "images/1791500667117-produk-contoh-1.jpg",
-      "shopee": "https://vt.tokopedia.com/t/ZS9DsawHosDjg-Zux6H/",
+      "shopee": "https://id.shp.ee/Q1q6rf4x",
       "active": true
     }
   ]
