@@ -145,19 +145,42 @@ $('#pForm').addEventListener('submit',async e=>{
 });
 
 // ---------- Info toko ----------
+let hFile=null,hDel=false;
+const ROLES=['Seller','Agen','Distributor'];
+const normPhone=v=>{let d=String(v||'').replace(/\D/g,'');if(d.startsWith('0'))d='62'+d.slice(1);else if(d.startsWith('8'))d='62'+d;return d};
+function contactRow(c={}){
+  const d=document.createElement('div');d.className='crow';
+  d.innerHTML=`<input class="cn" placeholder="Nama kontak" maxlength="40" value="${esc(c.name||'')}">
+    <select class="cr" aria-label="Peran">${ROLES.map(r=>`<option ${r===c.role?'selected':''}>${r}</option>`).join('')}</select>
+    <input class="cp" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx" value="${esc(c.phone||'')}">
+    <button type="button" class="x cd" aria-label="Hapus kontak">×</button>`;
+  return d;
+}
+function setHdrPrev(p){const h=$('#hdrPrev');h.style.backgroundImage=p?`url("${src(p)}")`:'';h.textContent=p?'':'Belum ada foto'}
 function fillStore(){
   const s=data.store;$('#sName').value=s.name||'';$('#sTag').value=s.tagline||'';$('#sIg').value=s.instagram||'';
   $('#sShop').value=s.shopeeStore||'';$('#sTheme').value=s.theme||'#ee4d2d';
   $('#logoPrev').innerHTML=s.logo?`<img src="${esc(src(s.logo))}" alt="">`:'🏪';
+  setHdrPrev(s.headerImage);hFile=null;hDel=false;
+  $('#contacts').replaceChildren(...(s.contacts||[]).map(contactRow));
 }
 $('#logoFile').onchange=e=>{lFile=e.target.files[0]||null;if(lFile)$('#logoPrev').innerHTML=`<img src="${URL.createObjectURL(lFile)}" alt="">`};
+$('#hdrFile').onchange=e=>{hFile=e.target.files[0]||null;if(hFile){hDel=false;setHdrPrev(URL.createObjectURL(hFile))}};
+$('#hdrDel').onclick=()=>{hFile=null;hDel=true;$('#hdrFile').value='';setHdrPrev('')};
+$('#addContact').onclick=()=>$('#contacts').append(contactRow());
+$('#contacts').addEventListener('click',e=>{if(e.target.closest('.cd'))e.target.closest('.crow').remove()});
 $('#storeForm').addEventListener('submit',async e=>{
-  e.preventDefault();const b=e.target.querySelector('.primary');busy(b,true);
+  e.preventDefault();const b=e.target.querySelector('button.primary');busy(b,true);
   try{
     const s=data.store;
     if(lFile){s.logo=await upload(lFile,400,'logo');lFile=null}
+    if(hFile){s.headerImage=await upload(hFile,1600,'header');hFile=null}else if(hDel)s.headerImage='';
+    hDel=false;
+    s.contacts=[...document.querySelectorAll('#contacts .crow')].map(r=>({
+      role:r.querySelector('.cr').value,phone:normPhone(r.querySelector('.cp').value),name:r.querySelector('.cn').value.trim()||r.querySelector('.cr').value
+    })).filter(c=>c.phone.length>=9);
     Object.assign(s,{name:$('#sName').value.trim(),tagline:$('#sTag').value.trim(),instagram:$('#sIg').value.trim(),shopeeStore:$('#sShop').value.trim(),theme:$('#sTheme').value});
-    setDirty(true);toast('Info toko disimpan. Klik Publikasikan untuk menayangkan.');
+    fillStore();setDirty(true);toast('Info toko disimpan. Klik Publikasikan untuk menayangkan.');
   }catch(err){toast('Gagal menyimpan: '+err.message,true)}
   busy(b,false);
 });
