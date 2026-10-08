@@ -20,6 +20,10 @@ let data={store:{},products:[]},sha=null,loaded=false,dirty=false,storeEdited=fa
 let edit=-1,pFile=null,lFile=null,hFile=null,hDel=false;
 const prev={};                       // path -> blob url (pratinjau sebelum Pages selesai deploy)
 const src=p=>prev[p]||p;
+const BEST=/laris|best\s*seller|favorit|populer|\bhot\b/i;
+const isNew=p=>{const t=Date.parse(p.createdAt);return /^baru$/i.test(p.category||'')||(!isNaN(t)&&(Date.now()-t)/864e5<=(+data.store.newDays||14))};
+const isPop=p=>p.popular===true||/^populer$/i.test(p.category||'')||BEST.test(p.badge||'');
+let cOn=false,ci=0,installReady=false,coachTimer=null;
 
 // ---------- UI helper ----------
 let tt;function toast(m,bad){const t=$('#toast');t.textContent=m;t.className='toast show'+(bad?' bad':'');clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3600)}
@@ -97,7 +101,7 @@ function showLogin(){
 async function enter(){
   $('#login').hidden=true;$('#app').hidden=false;
   try{await pull();loaded=true}catch(e){loaded=false;toast('Gagal memuat data: '+errMsg(e),true)}
-  renderList();fillStore();
+  renderList();fillStore();maybeCoach();
 }
 $('#loginForm').addEventListener('submit',async e=>{
   e.preventDefault();const b=$('#loginBtn');if(isBusy(b))return;
@@ -136,8 +140,8 @@ function renderList(){
   $('#list').innerHTML=L.length?L.map((p,i)=>`
     <article class="item ${p.active===false?'off':''}">
       <div class="th">${p.image?`<img src="${esc(src(p.image))}" alt="">`:'🛍️'}</div>
-      <div class="info"><b>${esc(p.name)}</b><span>${rp(p.price)}${p.category?' • '+esc(p.category):''}</span>
-        <span class="tag ${p.active===false?'off':''}">${p.active===false?'Disembunyikan':'Tampil'}</span></div>
+      <div class="info"><b>${esc(p.name)}</b><span>${rp(p.price)}${p.category&&!/^(baru|populer)$/i.test(p.category)?' • '+esc(p.category):''}</span>
+        <div class="tags"><span class="tag ${p.active===false?'off':''}">${p.active===false?'Disembunyikan':'Tampil'}</span>${isNew(p)?'<span class="tag new">Baru</span>':''}${isPop(p)?'<span class="tag pop">Populer</span>':''}</div></div>
       <div class="acts" data-i="${i}">
         <button data-a="up" title="Naikkan" ${i===0?'disabled':''}>↑</button>
         <button data-a="down" title="Turunkan" ${i===L.length-1?'disabled':''}>↓</button>
@@ -159,12 +163,16 @@ $('#addBtn').onclick=()=>openModal(-1);
 // ---------- Form produk ----------
 function openModal(i){
   edit=i;pFile=null;const p=i>=0?data.products[i]:{active:true};
+  const legacy=/^(baru|populer)$/i.test(p.category||'');     // kategori lama "Baru/Populer" dijadikan label
   $('#mTitle').textContent=i>=0?'Ubah produk':'Tambah produk';
   $('#pName').value=p.name||'';$('#pPrice').value=p.price??'';$('#pOld').value=p.oldPrice||'';
-  $('#pCat').value=p.category||'';$('#pBadge').value=p.badge||'';$('#pDesc').value=p.desc||'';
+  $('#pCat').value=legacy?'':(p.category||'');$('#pBadge').value=p.badge||'';$('#pDesc').value=p.desc||'';
+  $('#pPopular').checked=p.popular===true||/^populer$/i.test(p.category||'');
+  $('#pRenew').checked=false;$('#renewRow').hidden=i<0;
+  $('#newHint').textContent=`Produk otomatis berlabel Baru selama ${+data.store.newDays||14} hari sejak dibuat (atur di tab Info toko). Label "Terlaris" atau "Best Seller" juga dihitung Populer.`;
   $('#pShopee').value=p.shopee||'';$('#pActive').checked=p.active!==false;$('#pFile').value='';
   $('#pPrev').innerHTML=p.image?`<img src="${esc(src(p.image))}" alt="">`:'🛍️';
-  $('#cats').innerHTML=[...new Set(data.products.map(x=>x.category).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
+  $('#cats').innerHTML=[...new Set(data.products.map(x=>x.category).filter(c=>c&&!/^(baru|populer)$/i.test(c)))].map(c=>`<option value="${esc(c)}">`).join('');
   $('#modal').hidden=false;$('#pName').focus();
 }
 const closeModal=()=>{$('#modal').hidden=true};
@@ -182,8 +190,11 @@ $('#pForm').addEventListener('submit',async e=>{
     const old=edit>=0?data.products[edit]:{};
     let image=old.image||'';
     if(pFile){b.textContent='Mengunggah foto...';image=await upload(pFile,1000,name)}
+    const wasLegacyNew=/^baru$/i.test(old.category||'')&&!old.createdAt;
     const p={id:old.id||'p'+Date.now().toString(36),name,price:Math.max(0,+$('#pPrice').value||0),oldPrice:Math.max(0,+$('#pOld').value||0),
-      category:$('#pCat').value.trim(),badge:$('#pBadge').value.trim(),desc:$('#pDesc').value.trim(),image,shopee,active:$('#pActive').checked};
+      category:$('#pCat').value.trim(),badge:$('#pBadge').value.trim(),desc:$('#pDesc').value.trim(),image,shopee,active:$('#pActive').checked,
+      popular:$('#pPopular').checked,
+      createdAt:(edit<0||$('#pRenew').checked||wasLegacyNew)?new Date().toISOString():(old.createdAt||'')};
     if(edit>=0)data.products[edit]=p;else data.products.push(p);
     pFile=null;setDirty(true);renderList();closeModal();toast('Produk disimpan. Klik Publikasikan untuk menayangkan.');
   }catch(err){toast('Gagal menyimpan: '+errMsg(err),true)}
@@ -204,7 +215,7 @@ function contactRow(c={}){
 function setHdrPrev(p){const h=$('#hdrPrev');h.style.backgroundImage=p?`url("${src(p)}")`:'';h.textContent=p?'':'Belum ada foto'}
 function fillStore(){
   const s=data.store;$('#sName').value=s.name||'';$('#sTag').value=s.tagline||'';$('#sIg').value=s.instagram||'';
-  $('#sShop').value=s.shopeeStore||'';$('#sTheme').value=/^#[0-9a-f]{6}$/i.test(s.theme||'')?s.theme:'#ee4d2d';
+  $('#sShop').value=s.shopeeStore||'';$('#sNewDays').value=+s.newDays||14;$('#sTheme').value=/^#[0-9a-f]{6}$/i.test(s.theme||'')?s.theme:'#ee4d2d';
   $('#logoPrev').innerHTML=s.logo?`<img src="${esc(src(s.logo))}" alt="">`:'🏪';
   setHdrPrev(s.headerImage);hFile=null;hDel=false;lFile=null;$('#hdrFile').value='';$('#logoFile').value='';
   $('#contacts').replaceChildren(...(Array.isArray(s.contacts)?s.contacts:[]).map(contactRow));
@@ -230,7 +241,7 @@ $('#storeForm').addEventListener('submit',async e=>{
     const s=data.store;
     if(lFile){s.logo=await upload(lFile,400,'logo');lFile=null}
     if(hFile){s.headerImage=await upload(hFile,1600,'header');hFile=null}else if(hDel)s.headerImage='';
-    Object.assign(s,{name:$('#sName').value.trim(),tagline:$('#sTag').value.trim(),instagram:ig,shopeeStore:shop,theme:$('#sTheme').value,contacts});
+    Object.assign(s,{name:$('#sName').value.trim(),tagline:$('#sTag').value.trim(),instagram:ig,shopeeStore:shop,theme:$('#sTheme').value,newDays:Math.min(90,Math.max(1,+$('#sNewDays').value||14)),contacts});
     fillStore();setDirty(true);
     toast(contacts.length<rows.length?'Tersimpan. Kontak dengan nomor tidak valid dilewati. Klik Publikasikan.':'Info toko disimpan. Klik Publikasikan untuk menayangkan.');
   }catch(err){toast('Gagal menyimpan: '+errMsg(err),true)}
@@ -243,16 +254,83 @@ const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator
 const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
 let dp=null;
 function showInstall(){
-  if(standalone()||sessionStorage.getItem('instLater'))return;
-  if(dp){$('#installBtn').hidden=false;$('#installTxt').textContent='Install aplikasi supaya admin bisa dibuka cepat dilayar depan.'}
-  else{$('#installBtn').hidden=true;$('#installTxt').textContent=ios?'Di Safari (ios), ketuk tombol Bagikan lalu pilih "Tambah ke Layar Utama".':'Buka menu browser (titik tiga) lalu pilih "Instal aplikasi" atau "Tambahkan ke layar utama".'}
+  if(cOn||standalone()||sessionStorage.getItem('instLater'))return;
+  if(dp){$('#installBtn').hidden=false;$('#installTxt').textContent='Pasang di perangkatmu agar admin bisa dibuka cepat seperti aplikasi biasa.'}
+  else{$('#installBtn').hidden=true;$('#installTxt').textContent=ios?'Di Safari, ketuk tombol Bagikan lalu pilih "Tambah ke Layar Utama".':'Buka menu browser (titik tiga) lalu pilih "Instal aplikasi" atau "Tambahkan ke layar utama".'}
   $('#install').hidden=false;
 }
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;showInstall()});
 addEventListener('appinstalled',()=>{$('#install').hidden=true;toast('Aplikasi admin terpasang')});
 $('#installBtn').onclick=async()=>{if(!dp)return;dp.prompt();try{await dp.userChoice}catch(e){}dp=null;$('#install').hidden=true};
 $('#installLater').onclick=()=>{try{sessionStorage.setItem('instLater','1')}catch(e){}$('#install').hidden=true};
-setTimeout(showInstall,900);
+setTimeout(()=>{showInstall();installReady=true},900);
+
+// ---------- Coaching untuk pengguna baru ----------
+const CK=()=>`katalog_coach_v1_${cfg.owner}/${cfg.repo}`;
+const coachDone=()=>{try{return localStorage.getItem(CK())==='1'}catch(e){return false}};
+const markCoach=()=>{try{localStorage.setItem(CK(),'1')}catch(e){}};
+const STEPS=[
+ {t:'Selamat datang di Admin Katalog 👋',p:'Panduan singkat ini menunjukkan cara mengelola katalog Instagram-mu. Hanya 3 langkah: lengkapi info toko, tambah produk, lalu publikasikan.'},
+ {tab:'store',sel:'#storeForm .logo-row',t:'1. Lengkapi info toko',p:'Isi nama toko, deskripsi singkat, logo, serta link Instagram dan toko Shopee. Info ini tampil di bagian atas katalog.'},
+ {tab:'store',sel:'#hdrPrev',t:'Foto header',p:'Unggah foto lebar sebagai latar bagian atas katalog. Kosongkan jika ingin latar polos berwarna tema.'},
+ {tab:'store',sel:'#addContact',t:'Balon WhatsApp',p:'Tambahkan kontak Seller, Agen, atau Distributor. Pengunjung bisa langsung chat lewat balon WhatsApp di katalog. Klik "Simpan info toko" setelah selesai mengisi.'},
+ {tab:'products',sel:'#addBtn',t:'2. Tambah produk',p:'Isi nama, harga, foto, dan link produk dari Shopee. Produk baru otomatis masuk filter "Baru". Centang "Tandai Populer" agar muncul di filter "Populer".'},
+ {tab:'products',sel:'#list',t:'Kelola produk',p:'Pakai ↑ ↓ untuk mengatur urutan dan Ubah untuk mengedit. Matikan "Tampilkan di katalog" untuk menyembunyikan produk tanpa menghapusnya.'},
+ {sel:'#publish',t:'3. Publikasikan',p:'Semua perubahan baru tayang setelah kamu klik Publikasikan. Titik putih pada tombol berarti masih ada perubahan yang belum dipublikasikan.'},
+ {sel:'#viewBtn',t:'Lihat hasilnya',p:'Buka katalog untuk memeriksa tampilan. Perubahan muncul sekitar 1-2 menit setelah publikasi. Tempel link katalog di bio Instagram. Link khusus seperti ?f=populer atau ?f=baru bisa dipakai di story.'},
+ {sel:'#coachBtn',t:'Selesai! 🎉',p:'Panduan ini bisa dibuka lagi kapan saja lewat tombol Panduan.'}
+];
+function place(){
+  if(!cOn)return;
+  const s=STEPS[ci],el=s.sel&&document.querySelector(s.sel),co=$('#coach'),card=co.querySelector('.co-card'),hole=co.querySelector('.co-hole');
+  const r=el&&el.getBoundingClientRect();
+  if(!r||!r.width){co.classList.add('center');card.style.top=card.style.left='';return}
+  co.classList.remove('center');
+  const pad=6,vh=innerHeight,vw=innerWidth,h=Math.min(r.height,vh*.45);
+  Object.assign(hole.style,{left:r.left-pad+'px',top:r.top-pad+'px',width:r.width+pad*2+'px',height:h+pad*2+'px'});
+  const cw=card.offsetWidth,ch=card.offsetHeight;
+  let top=r.top+h+pad+12;
+  if(top+ch>vh-8)top=r.top-pad-12-ch;
+  if(top<8)top=Math.max(8,vh-ch-8);
+  card.style.top=top+'px';card.style.left=Math.min(Math.max(8,r.left+r.width/2-cw/2),vw-cw-8)+'px';
+}
+function showStep(){
+  const s=STEPS[ci];
+  if(s.tab)document.querySelector(`.tab[data-t=${s.tab}]`).click();
+  $('#coS').textContent=`Langkah ${ci+1} dari ${STEPS.length}`;
+  $('#coT').textContent=s.t;$('#coP').textContent=s.p;
+  $('#coD').innerHTML=STEPS.map((_,k)=>`<i class="${k===ci?'on':''}"></i>`).join('');
+  $('#coBack').hidden=ci===0;$('#coNext').textContent=ci===STEPS.length-1?'Selesai':'Lanjut';
+  const el=s.sel&&document.querySelector(s.sel);
+  if(el&&el.getBoundingClientRect().width)el.scrollIntoView({block:'center'});
+  requestAnimationFrame(()=>requestAnimationFrame(place));
+  $('#coNext').focus({preventScroll:true});
+}
+function startCoach(){
+  if(cOn)return;cOn=true;ci=0;$('#install').hidden=true;$('#coach').hidden=false;showStep();
+}
+function endCoach(){
+  cOn=false;$('#coach').hidden=true;markCoach();
+  document.querySelector('.tab[data-t=products]').click();scrollTo(0,0);
+}
+function maybeCoach(){
+  if(coachDone()||cOn||!loaded||coachTimer)return;
+  // tunggu popup install selesai agar tidak bertumpuk
+  coachTimer=setInterval(()=>{
+    if(installReady&&$('#install').hidden){clearInterval(coachTimer);coachTimer=null;if(!coachDone()&&!$('#app').hidden)setTimeout(startCoach,300)}
+  },400);
+}
+$('#coNext').onclick=()=>{if(ci>=STEPS.length-1)endCoach();else{ci++;showStep()}};
+$('#coBack').onclick=()=>{if(ci>0){ci--;showStep()}};
+$('#coSkip').onclick=endCoach;
+$('#coachBtn').onclick=startCoach;
+addEventListener('resize',place);addEventListener('scroll',place,true);
+addEventListener('keydown',e=>{
+  if(!cOn)return;
+  if(e.key==='Escape')endCoach();
+  else if(e.key==='ArrowRight')$('#coNext').click();
+  else if(e.key==='ArrowLeft'&&ci>0)$('#coBack').click();
+});
 
 // ---------- Mulai ----------
 cfg.token?enter():showLogin();
