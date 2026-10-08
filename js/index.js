@@ -4,37 +4,49 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const rp=n=>'Rp'+Number(n||0).toLocaleString('id-ID');
 const url=u=>/^https?:\/\//i.test(u||'')?u:'#';
 const tel=v=>{let d=String(v||'').replace(/\D/g,'');if(d.startsWith('0'))d='62'+d.slice(1);else if(d.startsWith('8'))d='62'+d;return d};
-let D={store:{},products:[]},cat='Semua',q='';
+let D={store:{},products:[]},cat='Semua',q='',opener=null;
 
-/* ---------- Anti salin: klik kanan, seleksi teks, copy, drag, pintasan keyboard ---------- */
+/* ---------- Anti salin ---------- */
 const field=t=>{const el=t&&t.nodeType===1?t:t&&t.parentElement;return !!(el&&el.closest('input,textarea'))};
 ['contextmenu','copy','cut','dragstart'].forEach(ev=>document.addEventListener(ev,e=>{if(!field(e.target))e.preventDefault()}));
 document.addEventListener('selectstart',e=>{if(!field(e.target))e.preventDefault()});
 document.addEventListener('keydown',e=>{
-  const k=e.key.toLowerCase(),m=e.ctrlKey||e.metaKey;
+  const k=(e.key||'').toLowerCase(),m=e.ctrlKey||e.metaKey;
+  if(k==='escape'){closeP();$('#waPanel').hidden=true;return}
   if(k==='f12'||(m&&['u','s','p'].includes(k))||(m&&e.shiftKey&&['i','j','c'].includes(k))||(m&&['c','x','a'].includes(k)&&!field(e.target)))e.preventDefault();
-  if(k==='escape'){closeP();$('#waPanel').hidden=true}
 });
+
+/* Gambar gagal dimuat (mis. belum selesai deploy) -> tampilkan ikon pengganti */
+document.addEventListener('error',e=>{
+  const t=e.target;if(!t||t.tagName!=='IMG')return;
+  if(t.id==='logo'){t.hidden=true;return}
+  if(t.closest('.ph,.m-ph'))t.replaceWith('🛍️');
+},true);
 
 async function load(){
   try{
     const r=await fetch('data/products.json?t='+Date.now(),{cache:'no-store'});
     if(!r.ok)throw 0;
     D=await r.json();
-  }catch(e){$('#grid').innerHTML='';$('#empty').hidden=false;$('#empty').textContent='Katalog belum bisa dimuat. Muat ulang halaman.';return}
+    if(!D||typeof D!=='object')D={};
+    D.store=D.store||{};D.products=Array.isArray(D.products)?D.products:[];
+  }catch(e){$('#grid').innerHTML='';$('#count').textContent='';$('#empty').hidden=false;$('#empty').textContent='Katalog belum bisa dimuat. Muat ulang halaman.';return}
   header();render();whatsapp();
 }
 
 function header(){
-  const s=D.store||{};
+  const s=D.store;
   document.title=(s.name||'Katalog')+' | Katalog Produk';
   $('#storeName').textContent=s.name||'Katalog';
   $('#tagline').textContent=s.tagline||'';
-  if(s.theme){document.documentElement.style.setProperty('--accent',s.theme);document.querySelector('meta[name=theme-color]').content=s.theme}
+  if(/^#[0-9a-f]{3,8}$/i.test(s.theme||'')){document.documentElement.style.setProperty('--accent',s.theme);document.querySelector('meta[name=theme-color]').content=s.theme}
   if(s.logo){const l=$('#logo');l.src=s.logo;l.alt=s.name||'';l.hidden=false}
   const hero=$('.hero');
-  if(s.headerImage){hero.style.setProperty('--hero-img',`url("${s.headerImage}")`);hero.classList.add('has-img')}
-  else hero.classList.remove('has-img');
+  if(s.headerImage){
+    // inline style (bukan CSS variable) agar path relatif dihitung dari halaman, bukan dari folder css/
+    hero.style.backgroundImage=`linear-gradient(180deg,rgba(20,33,61,.40),rgba(20,33,61,.85)),url("${String(s.headerImage).replace(/["\\\n\r]/g,'')}")`;
+    hero.classList.add('has-img');
+  }else{hero.style.backgroundImage='';hero.classList.remove('has-img')}
   const links=[];
   if(s.shopeeStore)links.push(['Toko Shopee',s.shopeeStore]);
   if(s.instagram)links.push(['Instagram',s.instagram]);
@@ -42,13 +54,14 @@ function header(){
 }
 
 function render(){
-  const all=(D.products||[]).filter(p=>p.active!==false);
+  const all=D.products.filter(p=>p&&p.active!==false);
   const cats=['Semua',...new Set(all.map(p=>p.category).filter(Boolean))];
   if(!cats.includes(cat))cat='Semua';
   $('#chips').innerHTML=cats.length>2?cats.map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join(''):'';
-  const list=all.filter(p=>(cat==='Semua'||p.category===cat)&&(p.name+' '+(p.desc||'')).toLowerCase().includes(q));
+  const list=all.filter(p=>(cat==='Semua'||p.category===cat)&&((p.name||'')+' '+(p.desc||'')).toLowerCase().includes(q));
   $('#count').textContent=list.length+' produk';
   $('#empty').hidden=list.length>0;
+  $('#empty').textContent=all.length?'Produk tidak ditemukan. Coba kata kunci atau kategori lain.':'Belum ada produk yang ditampilkan.';
   $('#grid').innerHTML=list.map(p=>`
     <article class="card" data-i="${D.products.indexOf(p)}" tabindex="0" role="button" aria-label="Lihat detail ${esc(p.name)}">
       <div class="ph">${p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" draggable="false">`:'🛍️'}${p.badge?`<span class="badge">${esc(p.badge)}</span>`:''}</div>
@@ -65,6 +78,7 @@ function render(){
 /* ---------- Popup detail produk ---------- */
 function openP(i){
   const p=D.products[i];if(!p)return;
+  opener=document.activeElement;
   const off=p.oldPrice>p.price?Math.round((1-p.price/p.oldPrice)*100):0;
   $('#mBody').innerHTML=`
     <div class="m-ph">${p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" draggable="false">`:'<span>🛍️</span>'}${p.badge?`<span class="badge">${esc(p.badge)}</span>`:''}</div>
@@ -79,23 +93,28 @@ function openP(i){
     </div>`;
   $('#modal').hidden=false;document.body.classList.add('lock');$('#mClose').focus();
 }
-function closeP(){const m=$('#modal');if(m.hidden)return;m.hidden=true;document.body.classList.remove('lock')}
+function closeP(){
+  const m=$('#modal');if(m.hidden)return;
+  m.hidden=true;document.body.classList.remove('lock');
+  if(opener&&opener.focus)opener.focus();opener=null;
+}
 $('#grid').addEventListener('click',e=>{const c=e.target.closest('.card');if(c&&!e.target.closest('.buy'))openP(+c.dataset.i)});
-$('#grid').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('card'))openP(+e.target.dataset.i)});
+$('#grid').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('card')){e.preventDefault();openP(+e.target.dataset.i)}});
 $('#mClose').onclick=closeP;
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeP()});
 
-/* ---------- Balon WhatsApp (data dari admin) ---------- */
+/* ---------- Balon WhatsApp ---------- */
 function whatsapp(){
-  const cs=(D.store.contacts||[]).filter(c=>tel(c.phone).length>=9);
+  const cs=(Array.isArray(D.store.contacts)?D.store.contacts:[]).filter(c=>c&&tel(c.phone).length>=9);
   $('#wa').hidden=!cs.length;
   $('#waList').innerHTML=cs.map(c=>{
     const txt=`Halo ${c.name||''}, saya tertarik dengan produk di katalog ${D.store.name||''}.`;
+    const ini=((c.name||c.role||'?').trim()[0]||'?').toUpperCase();
     return `<a class="wa-item" href="https://wa.me/${tel(c.phone)}?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">
-      <span class="wa-av">${esc((c.name||c.role||'?').trim()[0]||'?').toUpperCase()}</span>
-      <span><b>${esc(c.name||c.role)}</b><small>${esc(c.role||'Seller')}</small></span></a>`}).join('');
+      <span class="wa-av">${esc(ini)}</span><span><b>${esc(c.name||c.role)}</b><small>${esc(c.role||'Seller')}</small></span></a>`}).join('');
 }
 $('#waBtn').onclick=()=>{$('#waPanel').hidden=!$('#waPanel').hidden};
+document.addEventListener('click',e=>{if(!e.target.closest('#wa'))$('#waPanel').hidden=true});
 
 $('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){cat=b.dataset.c;render()}});
 $('#q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();render()});
