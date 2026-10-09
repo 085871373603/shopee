@@ -103,3 +103,57 @@ body.lock{overflow:hidden}
 .pill{font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px}
 .pill.n{background:#e0edff;color:#1d4ed8}
 .pill.p{background:#ffe9e0;color:#c2410c}
+
+/* ===== Label produk (Font Awesome) + animasi ===== */
+.card{position:relative}
+.ph{overflow:hidden;color:#a3acbd}
+.lbs{position:absolute;left:8px;top:8px;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.lb{--c:var(--accent);position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:5px;color:#fff;background:var(--c);font:700 11px/1 Figtree,sans-serif;padding:5px 10px 5px 8px;border-radius:99px;box-shadow:0 2px 8px rgba(0,0,0,.2);transform-origin:left center}
+.lb i{font-size:11px;display:inline-block}
+.lb.new{--c:#2563eb}
+.lb.pop{--c:#ea580c}
+.lb::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);transform:translateX(-130%);pointer-events:none}
+.deal{position:absolute;right:8px;top:8px;z-index:2;display:inline-flex;align-items:center;gap:4px;background:#dc2626;color:#fff;font:800 11px/1 Figtree,sans-serif;padding:5px 9px;border-radius:99px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.deal i{font-size:10px}
+.deal::before{content:"";position:absolute;inset:0;border-radius:inherit;border:2px solid #dc2626;opacity:0;pointer-events:none}
+
+/* label muncul sebelum kartu terlihat: disembunyikan agar tidak berkedip */
+.card:not(.seen) .lb,.card:not(.seen) .deal{opacity:0}
+.seen .lb{animation:lb-in .55s cubic-bezier(.2,1.5,.4,1) both;animation-delay:var(--d,0s)}
+.seen .deal{animation:lb-in .55s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(var(--d,0s) + .12s)}
+.seen .lbs .lb:nth-child(2){animation-delay:calc(var(--d,0s) + .2s)}
+
+/* animasi berulang: hanya saat kartu terlihat */
+.inview .lb::after{animation:lb-shine 3.4s ease-in-out infinite;animation-delay:calc(var(--d,0s) + .8s)}
+.inview .lb.pop i{animation:flame 1.1s ease-in-out infinite;transform-origin:50% 90%}
+.inview .lb.new i{animation:twinkle 1.7s ease-in-out infinite}
+.inview .lb.custom i{animation:twinkle 2.2s ease-in-out infinite}
+.inview .deal::before{animation:ripple 1.9s ease-out infinite}
+.inview .deal i{animation:wiggle 2.4s ease-in-out infinite;transform-origin:50% 20%}
+
+/* kartu berlabel: cahaya tepi + kilau pada foto */
+.card.has-lb::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;opacity:0;--glow:var(--accent);box-shadow:inset 0 0 0 2px var(--glow),inset 0 0 22px var(--glow)}
+.card.hot::before{--glow:#ea580c}
+.card.fresh::before{--glow:#2563eb}
+.card.has-lb.inview::before{animation:glow 2.6s ease-in-out infinite;animation-delay:var(--d,0s)}
+.card.has-lb .ph::after{content:"";position:absolute;top:0;left:0;width:45%;height:100%;z-index:1;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-140%) skewX(-18deg)}
+.card.has-lb.inview .ph::after{animation:sweep 4.6s ease-in-out infinite;animation-delay:calc(var(--d,0s) + 1s)}
+.chip.smart i{font-size:12px;margin-right:2px}
+.chip.smart.pop:not(.on) i{color:#ea580c}
+.chip.smart.new:not(.on) i{color:#2563eb}
+.chip.smart.sale:not(.on) i{color:#dc2626}
+.pill i{font-size:11px}
+
+@keyframes lb-in{0%{opacity:0;transform:scale(.3) translateY(-6px)}60%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+@keyframes lb-shine{0%,55%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+@keyframes flame{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.18,1.08) rotate(-7deg)}50%{transform:scale(.92,1.2) rotate(6deg)}75%{transform:scale(1.1) rotate(-3deg)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.28) rotate(20deg)}}
+@keyframes wiggle{0%,60%,100%{transform:rotate(0)}70%{transform:rotate(-18deg)}80%{transform:rotate(14deg)}90%{transform:rotate(-8deg)}}
+@keyframes ripple{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(1.5,1.7)}}
+@keyframes glow{0%,100%{opacity:.08}50%{opacity:.85}}
+@keyframes sweep{0%,60%{transform:translateX(-140%) skewX(-18deg)}100%{transform:translateX(340%) skewX(-18deg)}}
+
+@media(prefers-reduced-motion:reduce){
+  .seen .lb,.seen .deal,.inview .lb::after,.inview .lb i,.inview .deal::before,.inview .deal i,.card.has-lb.inview::before,.card.has-lb.inview .ph::after{animation:none!important}
+  .card.has-lb::before{opacity:.35}
+          }
