@@ -15,10 +15,10 @@
 <!-- Login -->
 <section id="login" class="login">
   <form id="loginForm" class="panel">
-    <h1>Masuk admin</h1>
-    <p class="hint">Gunakan GitHub Personal Access Token (izin <b>Contents: Read and write</b> untuk repo katalog ini).</p>
+    <h1>Selamat Datang</h1>
+    <p class="hint">Login Admin</p>
     <label>Username GitHub<input id="fOwner" required autocomplete="off"></label>
-    <label>Nama repository<input id="fRepo" required autocomplete="off"></label>
+    <label>Repository<input id="fRepo" required autocomplete="off"></label>
     <label>Branch<input id="fBranch" value="main" required></label>
     <label>Token (PAT)<input id="fToken" type="password" required autocomplete="off" placeholder="github_pat_..."></label>
     <p id="loginErr" class="err" role="alert"></p>
@@ -29,7 +29,7 @@
 <!-- Dashboard -->
 <div id="app" hidden>
   <header class="top">
-    <div class="brand">Admin Katalog</div>
+    <div class="brand">Admin</div>
     <div class="top-r">
       <button class="btn ghost" id="coachBtn" title="Buka panduan">Panduan</button>
       <a class="btn ghost" id="viewBtn" href="index.html" target="_blank">Lihat katalog</a>
@@ -63,21 +63,21 @@
         <label>Warna tema<input id="sTheme" type="color" value="#ee4d2d"></label>
         <label>Label "Baru" berlaku selama (hari)<input id="sNewDays" type="number" min="1" max="90" value="14"></label>
         <fieldset class="fs">
-          <legend>Foto header katalog</legend>
+          <legend>Gambar header katalog</legend>
           <div class="hdr-prev" id="hdrPrev">Belum ada foto</div>
           <div class="hdr-act">
             <label class="btn ghost">Pilih foto<input type="file" id="hdrFile" accept="image/*" hidden></label>
             <button type="button" class="btn ghost" id="hdrDel">Hapus foto</button>
           </div>
-          <p class="hint">Dipakai sebagai latar bagian atas katalog. Gunakan foto lebar, mis. 1600x600.</p>
+          <p class="hint">Rekomendasi Ukuran gambar 1600x600.</p>
         </fieldset>
         <fieldset class="fs">
-          <legend>Kontak WhatsApp (balon chat)</legend>
+          <legend>WhatsApp</legend>
           <p class="hint">Tampil sebagai balon WhatsApp di katalog. Nomor boleh diawali 08 atau 62.</p>
           <div id="contacts"></div>
           <button type="button" class="btn ghost" id="addContact">+ Tambah kontak</button>
         </fieldset>
-        <button class="btn primary">Simpan info toko</button>
+        <button class="btn primary">Simpan Profil toko</button>
       </form>
     </section>
   </main>
@@ -97,8 +97,8 @@
       <label>Harga coret (opsional)<input id="pOld" type="number" min="0"></label>
     </div>
     <div class="two">
-      <label>Kategori<input id="pCat" list="cats" placeholder="mis. Makanan"></label>
-      <label>Label (opsional)<input id="pBadge" maxlength="14" placeholder="mis. Terlaris"></label>
+      <label>Kategori<input id="pCat" list="cats" placeholder="Gelang Pria"></label>
+      <label>Label (opsional)<input id="pBadge" maxlength="14" placeholder="Terlaris"></label>
     </div>
     <datalist id="cats"></datalist>
     <div class="flags">
@@ -117,8 +117,8 @@
 <div id="install" class="modal" hidden>
   <div class="sheet center">
     <div class="app-ic"><img src="icons/icon-192.png" alt="" width="64" height="64"></div>
-    <h2>Pasang aplikasi admin</h2>
-    <p id="installTxt">Pasang di perangkatmu agar admin bisa dibuka cepat seperti aplikasi biasa.</p>
+    <h2>Install Aplikasi</h2>
+    <p id="installTxt">Install Aplikasi admin supayabisa dibuka cepat dilayar depan.</p>
     <button class="btn primary" id="installBtn">Pasang sekarang</button>
     <button class="btn ghost" id="installLater">Nanti saja</button>
   </div>
