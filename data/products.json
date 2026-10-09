@@ -58,6 +58,20 @@
       "active": true,
       "popular": false,
       "createdAt": ""
+    },
+    {
+      "id": "pmv07ssuq",
+      "name": "JAM TANGAN PRIA MINIMALIS",
+      "price": 262300,
+      "oldPrice": 0,
+      "category": "Elektronik",
+      "badge": "Baru",
+      "desc": "Jam tangan pria minimalis",
+      "image": "images/1791504961411-jam-tangan-pria-minimalis.jpg",
+      "shopee": "https://id.shp.ee/4jmJsiit",
+      "active": true,
+      "popular": true,
+      "createdAt": "2026-10-09T00:16:03.602Z"
     }
   ]
 }
