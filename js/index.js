@@ -1202,4 +1202,63 @@ function whatsapp() {
   // [START-01] Memuat data dan menampilkan katalog.
   load();
 
+
+  // =========================================================
+  // [PROTECT-08] MENCEGAH ZOOM HALAMAN
+  // =========================================================
+
+  // Mencegah zoom melalui gesture pada perangkat sentuh.
+  document.addEventListener('gesturestart', e => {
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('gesturechange', e => {
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('gestureend', e => {
+    e.preventDefault();
+  }, { passive: false });
+
+  // Mencegah pinch-to-zoom melalui beberapa sentuhan.
+  document.addEventListener('touchmove', e => {
+    if (e.touches && e.touches.length > 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // Mencegah zoom melalui double-tap di perangkat sentuh.
+  let lastTouchEnd = 0;
+
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+
+    if (now - lastTouchEnd <= 300) {
+      e.preventDefault();
+    }
+
+    lastTouchEnd = now;
+  }, { passive: false });
+
+  // Mengunci skala viewport agar halaman tetap pada ukuran awal.
+  function lockPageZoom() {
+    let viewport = document.querySelector(
+      'meta[name="viewport"]'
+    );
+
+    if (!viewport) {
+      viewport = document.createElement('meta');
+      viewport.name = 'viewport';
+      document.head.appendChild(viewport);
+    }
+
+    viewport.content =
+      'width=device-width, initial-scale=1.0, ' +
+      'maximum-scale=1.0, minimum-scale=1.0, ' +
+      'user-scalable=no, viewport-fit=cover';
+  }
+
+  lockPageZoom();
+
+  
 })();
