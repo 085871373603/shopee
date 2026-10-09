@@ -23,6 +23,20 @@
   },
   "products": [
     {
+      "id": "pmv07ssuq",
+      "name": "JAM TANGAN PRIA MINIMALIS",
+      "price": 262300,
+      "oldPrice": 350000,
+      "category": "Elektronik",
+      "badge": "Terlaris",
+      "desc": "Jam tangan pria minimalis",
+      "image": "images/1791504961411-jam-tangan-pria-minimalis.jpg",
+      "shopee": "https://id.shp.ee/4jmJsiit",
+      "active": true,
+      "popular": true,
+      "createdAt": "2026-10-09T00:16:03.602Z"
+    },
+    {
       "id": "p2",
       "name": "ESP32 DOIT WIFI BLUETOOTH",
       "price": 65665,
@@ -63,20 +77,6 @@
       "active": true,
       "popular": false,
       "createdAt": ""
-    },
-    {
-      "id": "pmv07ssuq",
-      "name": "JAM TANGAN PRIA MINIMALIS",
-      "price": 262300,
-      "oldPrice": 350000,
-      "category": "Elektronik",
-      "badge": "Terlaris",
-      "desc": "Jam tangan pria minimalis",
-      "image": "images/1791504961411-jam-tangan-pria-minimalis.jpg",
-      "shopee": "https://id.shp.ee/4jmJsiit",
-      "active": true,
-      "popular": true,
-      "createdAt": "2026-10-09T00:16:03.602Z"
     }
   ]
 }
