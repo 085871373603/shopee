@@ -1086,43 +1086,56 @@
   // [WHATSAPP] KONTAK SELLER, AGEN, DAN DISTRIBUTOR
   // =========================================================
 
-  // [WHATSAPP-01] Membuat daftar kontak WhatsApp dari data toko.
-  function whatsapp() {
-    const cs = (
-      Array.isArray(D.store.contacts)
-        ? D.store.contacts
-        : []
-    ).filter(c =>
-      c && tel(c.phone).length >= 9
-    );
+  // [WHATSAPP-01] Membuat daftar kontak WhatsApp dengan salam otomatis.
+function whatsapp() {
+  const cs = (
+    Array.isArray(D.store.contacts)
+      ? D.store.contacts
+      : []
+  ).filter(c =>
+    c && tel(c.phone).length >= 9
+  );
 
-    $('#wa').hidden = !cs.length;
+  $('#wa').hidden = !cs.length;
 
-    $('#waList').innerHTML = cs.map(c => {
-      const txt =
-        `Halo ${c.name || ''}, Hallo Admin ${D.store.name || ''}.`;
+  // [WHATSAPP-02] Menentukan salam berdasarkan waktu lokal perangkat.
+  const jam = new Date().getHours();
 
-      const ini = (
-        (c.name || c.role || '?').trim()[0] || '?'
-      ).toUpperCase();
+  const salam =
+    jam >= 5 && jam < 11 ? 'Selamat pagi' :
+    jam >= 11 && jam < 15 ? 'Selamat siang' :
+    jam >= 15 && jam < 18 ? 'Selamat sore' :
+    'Selamat malam';
 
-      return `
-        <a
-          class="wa-item"
-          href="https://wa.me/${tel(c.phone)}?text=${encodeURIComponent(txt)}"
-          target="_blank"
-          rel="noopener"
-        >
-          <span class="wa-av">${esc(ini)}</span>
+  // [WHATSAPP-03] Menampilkan kontak beserta pesan WhatsApp otomatis.
+  $('#waList').innerHTML = cs.map(c => {
+    const nama = (c.name || '').trim();
+    const toko = (D.store.name || '').trim();
 
-          <span>
-            <b>${esc(c.name || c.role)}</b>
-            <small>${esc(c.role || 'Seller')}</small>
-          </span>
-        </a>
-      `;
-    }).join('');
-  }
+    const txt = `${salam}${nama ? ' ' + nama : ''}, Admin${toko ? ' ' + toko : ''}.`;
+
+    // Inisial kontak untuk avatar.
+    const ini = (
+      (c.name || c.role || '?').trim()[0] || '?'
+    ).toUpperCase();
+
+    return `
+      <a
+        class="wa-item"
+        href="https://wa.me/${tel(c.phone)}?text=${encodeURIComponent(txt)}"
+        target="_blank"
+        rel="noopener"
+      >
+        <span class="wa-av">${esc(ini)}</span>
+
+        <span>
+          <b>${esc(c.name || c.role)}</b>
+          <small>${esc(c.role || 'Seller')}</small>
+        </span>
+      </a>
+    `;
+  }).join('');
+}
 
   // [WHATSAPP-02] Membuka dan menutup panel kontak WhatsApp.
   $('#waBtn').onclick = () => {
